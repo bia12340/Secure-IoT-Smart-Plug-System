@@ -8,19 +8,53 @@
     <style>
         :root { --bg: #0f172a; --card: #1e293b; --accent: #38bdf8; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        
         h1 { font-size: 1.8rem; margin-bottom: 5px; color: var(--accent); }
         .status-bar { font-size: 0.9rem; margin-bottom: 30px; transition: 0.3s; }
         
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 20px; width: 100%; max-width: 500px; }
-        .socket-card { background: var(--card); padding: 25px; border-radius: 24px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transition: 0.3s; border: 1px solid #334155; }
+        /* Aranjare verticala: 1 coloana */
+        .grid { display: grid; grid-template-columns: 1fr; gap: 25px; width: 100%; max-width: 400px; }
         
-        /* Butonul Toggle Pro */
-        .btn { width: 80px; height: 80px; border-radius: 50%; border: none; cursor: pointer; background: #334155; color: white; font-size: 24px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; box-shadow: 0 4px 0 #1e293b; }
-        .btn.active { background: #22c55e; color: white; box-shadow: 0 0 20px rgba(34, 197, 94, 0.5); transform: translateY(-2px); }
+        .socket-card { 
+            background: var(--card); 
+            padding: 30px; 
+            border-radius: 24px; 
+            text-align: center; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            border: 1px solid #334155; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* Butonul mult mai mare */
+        .btn { 
+            width: 120px; 
+            height: 120px; 
+            border-radius: 50%; 
+            border: none; 
+            cursor: pointer; 
+            background: #334155; 
+            color: white; 
+            font-size: 40px; /* Iconita mai mare */
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            position: relative; 
+            box-shadow: 0 6px 0 #0f172a; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn.active { 
+            background: #22c55e; 
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.4); 
+            transform: translateY(-4px); 
+        }
+        
         .btn:active { transform: translateY(2px); box-shadow: none; }
         
-        .label { margin-top: 15px; font-weight: 600; font-size: 1.1rem; display: block; }
-        .state-text { font-size: 0.8rem; opacity: 0.6; display: block; margin-top: 5px; }
+        .label { margin-top: 15px; font-weight: 700; font-size: 1.3rem; display: block; }
+        .state-text { font-size: 1rem; font-weight: bold; opacity: 0.8; display: block; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -33,11 +67,13 @@
             <span class="label">Socket 1</span>
             <span id="state1" class="state-text">OFF</span>
         </div>
+        
         <div class="socket-card">
             <button id="btn2" class="btn" onclick="toggle(2)">🔌</button>
             <span class="label">Socket 2</span>
             <span id="state2" class="state-text">OFF</span>
         </div>
+        
         <div class="socket-card">
             <button id="btn3" class="btn" onclick="toggle(3)">🔌</button>
             <span class="label">Socket 3</span>
@@ -56,10 +92,9 @@
             client.subscribe(topicStatus);
         });
 
-        // Ascultam feedback-ul de la ESP32
         client.on('message', (topic, payload) => {
             const msg = payload.toString();
-            const [id, state] = msg.split(':'); // Format asteptat "1:ON"
+            const [id, state] = msg.split(':'); 
             updateUI(id, state);
         });
 
