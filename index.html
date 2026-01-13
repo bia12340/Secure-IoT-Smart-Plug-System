@@ -54,9 +54,23 @@
         
         .label { margin-top: 12px; font-weight: 700; font-size: 1.2rem; display: block; }
         .state-text { font-size: 0.9rem; font-weight: bold; opacity: 0.75; display: block; margin-top: 2px; }
+        
+        #login-screen { position: fixed; top:0; left:0; width:100%; height:100%; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+        input { padding: 12px; border-radius: 12px; border: 1px solid var(--accent); background: #1e293b; color: white; margin-bottom: 15px; text-align: center; font-size: 1rem; outline: none; }
+        button#login-btn { padding: 12px 30px; border-radius: 12px; border: none; background: var(--accent); color: var(--bg); font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button#login-btn:active { transform: scale(0.95); }
+        
+        .logout-link { margin-top: 30px; font-size: 11px; opacity: 0.3; cursor: pointer; text-decoration: underline; }
     </style>
 </head>
 <body>
+    <div id="login-screen">
+        <h1>Bia Smart Home</h1>
+        <p style="opacity: 0.7;">Securitate Actvată</p>
+        <input type="password" id="pass-input" placeholder="Cod Acces">
+        <button id="login-btn" onclick="checkPass()">Deblochează</button>
+    </div>
+    
     <h1>Smart Control</h1>
     <div id="status" class="status-bar">Connecting...</div>
 
@@ -81,9 +95,30 @@
     </div>
 
     <script>
+        window.onload = function() {
+            if (localStorage.getItem("isLoggedIn") === "true") {
+                document.getElementById('login-screen').style.display = "none";
+            }
+        }
+
+        function checkPass() {
+            if(document.getElementById('pass-input').value === "lumos") { 
+                localStorage.setItem("isLoggedIn", "true");
+                document.getElementById('login-screen').style.display = "none";
+            } else {
+                alert("Cod incorect!");
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("isLoggedIn");
+            location.reload();
+        }
+
+        // --- MQTT ---
         const client = mqtt.connect('wss://broker.hivemq.com:8884/mqtt');
-        const topicCmd = 'casa/priza/comenzi';
-        const topicStatus = 'casa/priza/status';
+        const topicCmd = 'bia_smart_12340/priza/comenzi';
+        const topicStatus = 'bia_smart_12340/priza/status';
 
         client.on('connect', () => {
             document.getElementById('status').innerText = "Online";
@@ -117,4 +152,5 @@
     </script>
 </body>
 </html>
+
 
